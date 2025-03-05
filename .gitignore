@@ -2,5 +2,13 @@
 __pycache__/
 *.pyc
 *.pyo
+
+# Virtual environments
 venv/
+.venv/
+
+# Environment files
 .env
+
+# SQLite database file (if you don't want to track it)
+instance/database.sqlite3

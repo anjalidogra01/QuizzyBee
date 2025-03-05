@@ -13,7 +13,6 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String, nullable=False)
     fullname = db.Column(db.String, nullable=False)
     qualification = db.Column(db.String, nullable=True)
-    image = db.Column(db.String, nullable=True)
     dob = db.Column(db.Date, nullable=True)
     scores = db.relationship('Score', back_populates='user')
     fs_uniquifier = db.Column(db.String,unique = True,nullable=False)
