@@ -10,5 +10,5 @@ venv/
 # Environment files
 .env
 
-# SQLite database file (if you don't want to track it)
+
 instance/database.sqlite3

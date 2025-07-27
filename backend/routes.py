@@ -1,8 +1,11 @@
 from datetime import datetime
 from flask import current_app as app, jsonify, render_template, request
-from flask_security import auth_required, hash_password
-from flask_security.utils import verify_and_update_password
+from flask_login import current_user
+from flask_security import auth_required, hash_password, verify_password
 from backend.models import db, Role, User
+from werkzeug.utils import secure_filename
+from flask_mail import Message
+import os
 
 datastore = app.security.datastore
 
@@ -11,80 +14,115 @@ def home():
     return render_template('index.html')
 
 @app.route('/protected', methods=['GET'])
-@auth_required()
+@auth_required('token')
 def protected():
-    return '<h1>Only accessible by authenticated users</h1>'
+    return jsonify({
+        "message": "Access granted",
+        "token": request.headers.get("Authentication-Token")
+    })
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/custom-login', methods=['POST'])
 def login():
-    if request.method == 'GET':
-        return render_template('login.html')
+    try:
+        data = request.get_json(force=True)
+    except Exception:
+        return jsonify({'message': 'Invalid JSON'}), 400
 
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
+    email = data.get('email', '').strip()
+    password = data.get('password', '').strip()
 
     if not email or not password:
-        return jsonify({'message': "Invalid inputs"}), 400
+        return jsonify({'message': 'Missing credentials'}), 400
 
     user = datastore.find_user(email=email)
+    if not user or not verify_password(password, user.password):
+        return jsonify({'message': 'Invalid email or password'}), 401
 
-    if not user:
-        return jsonify({'message': "Invalid email"}), 404
-        
-    if verify_and_update_password(password, user):
-        return jsonify({
-            'email': user.email, 
-            'role': user.roles[0].name,  # Returns "admin" or "user"
-            'id': user.id, 
-            'token': user.get_auth_token()
-        })
+    # ⭐ check if user is blocked
+    if not user.active:
+        return jsonify({'message': 'You are blocked by admin on this platform.'}), 403
 
-    return jsonify({'message': "Invalid credentials"}), 401
+    return jsonify({
+        'email': user.email,
+        'role': user.roles[0].name if user.roles else None,
+        'id': user.id,
+        'token': user.get_auth_token()
+    }), 200
+
 
 @app.route('/register', methods=['POST'])
 def register():
-    data = request.get_json()
+    if 'image' not in request.files:
+        return jsonify({'message': 'No image part in request'}), 400
 
-    email = data.get('email')
-    password = data.get('password')
-    username = data.get('username')  
-    fullname = data.get('fullname')  
-    qualification = data.get('qualification')
-    dob = data.get('dob')
+    image = request.files['image']
+    email = request.form.get('email', '').strip()
+    password = request.form.get('password', '').strip()
+    username = request.form.get('username', '').strip()
+    fullname = request.form.get('fullname', '').strip()
+    qualification = request.form.get('qualification', '').strip()
+    dob = request.form.get('dob', '').strip()
+    role_name = request.form.get('role', 'user').lower()
 
-    # Validate input
     if not email or not password or not username or not fullname:
         return jsonify({'message': 'All required fields must be filled'}), 400
 
-    # 🚀 Prevent Admin Registration
-    user_role = Role.query.filter_by(name="user").first()
+    if User.query.filter_by(email=email).first():
+        return jsonify({'message': 'Email already registered'}), 400
+
+    if User.query.filter_by(username=username).first():
+        return jsonify({'message': 'Username already taken'}), 400
+
+    filename = None
+    if image and image.filename != '':
+        filename = secure_filename(image.filename)
+        upload_folder = app.config['UPLOAD_FOLDER']
+        os.makedirs(upload_folder, exist_ok=True)
+        image_path = os.path.join(upload_folder, filename)
+        image.save(image_path)
+
+    user_role = Role.query.filter_by(name='user').first()
     if not user_role:
         return jsonify({'message': 'User role does not exist in database'}), 500
 
-    if 'admin' in data.get('role', '').lower():
-        return jsonify({'message': 'Admin registration is not allowed'}), 403
-
-    # Check if user already exists
-    existing_user = datastore.find_user(email=email)
-    if existing_user:
-        return jsonify({'message': 'User already exists'}), 409
-
     try:
         new_user = datastore.create_user(
-            email=email, 
-            password=hash_password(password), 
-            username=username,  
-            fullname=fullname, 
+            email=email,
+            password=hash_password(password),
+            username=username,
+            fullname=fullname,
             qualification=qualification,
             dob=datetime.strptime(dob, "%Y-%m-%d") if dob else None,
-            roles=[user_role],  # Assign User Role Only
+            image=filename,
+            roles=[user_role],
             active=True
         )
         db.session.commit()
+
+        try:
+            msg = Message(
+                subject="Welcome to QuizzyBee",
+                recipients=[email],
+                body=f"""Hi {fullname},\n\nWelcome to QuizzyBee – your gateway to smarter quizzes and better learning!\nYour account has been created successfully.\n\nThanks for joining us!\n\n— Team QuizzyBee\nBrought to you with passion by Anjali Dogra ✨\n"""
+            )
+            app.extensions['mail'].send(msg)
+        except Exception:
+            pass
+
         return jsonify({'message': 'User created successfully'}), 201
 
     except Exception as e:
         db.session.rollback()
-        print("Error:", str(e)) 
         return jsonify({'message': 'Error creating user', 'error': str(e)}), 500
+
+
+@app.route('/admin-dashboard', methods=['GET'])
+@auth_required('token')
+def admin_dashboard():
+    return jsonify({
+        'admin_details': {
+            'name': current_user.fullname,
+            'email': current_user.email,
+            'role': current_user.roles[0].name if current_user.roles else "Admin"
+        }
+    }), 200

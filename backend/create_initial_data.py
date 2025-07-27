@@ -7,20 +7,24 @@ with app.app_context():
 
     userdatastore: SQLAlchemyUserDatastore = app.security.datastore
 
-    userdatastore.find_or_create_role(name='admin', description='superuser')
-    userdatastore.find_or_create_role(name='user', description='general user')
+    admin_role = userdatastore.find_or_create_role(name='admin', description='superuser')
+    user_role = userdatastore.find_or_create_role(name='user', description='general user')
 
-    # 🚀 Ensure Only One Admin Exists
+    # Find existing admin by role
     existing_admin = User.query.join(User.roles).filter(Role.name == 'admin').first()
 
-    if not existing_admin:
+    if existing_admin:
+        existing_admin.email = 'anjalidogra2005@gmail.com'
+        existing_admin.username = 'admin'
+        existing_admin.password = hash_password('pass')
+        existing_admin.roles = [admin_role]
+    else:
         userdatastore.create_user(
-            email='admin@study.iitm.ac.in',
+            email='anjalidogra2005@gmail.com',
             password=hash_password('pass'),
             username='admin',
             fullname='Admin',
-            roles=['admin']
+            roles=[admin_role]
         )
 
     db.session.commit()
-  

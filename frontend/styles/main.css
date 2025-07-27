@@ -1,0 +1,301 @@
+/* ========================= */
+/* 🌎 GENERAL STYLES */
+/* ========================= */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    min-height: 80vh;
+    background-image: url('/static/styles/uploads/images/delicate-splashes-violet-dye.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+/* Centering Container */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Jumbotron */
+.jumbotron {
+    text-align: center;
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Gradient Text Effect */
+.text-gradient {
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ========================= */
+/* 🔹 FEATURE CARD STYLES */
+/* ========================= */
+
+.feature-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.row .col-md-4 {
+    display: flex;
+}
+
+/* Apply Purple Theme */
+.text-purple {
+    color: #6a11cb !important;
+}
+
+.feature-card i {
+    color: #6a11cb !important;
+}
+
+/* ========================= */
+/* 🔘 BUTTON STYLES */
+/* ========================= */
+
+.btn-purple {
+    background: #6a11cb;
+    color: white !important;
+    border: none;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 6px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-purple:hover {
+    background: #5110a6;
+    transform: translateY(-2px);
+}
+
+.btn-outline-purple {
+    border: 2px solid #6a11cb;
+    color: #6a11cb !important;
+    background: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 6px;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-outline-purple:hover {
+    background: #6a11cb;
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+.border-purple {
+    border: 2px solid #6a11cb !important;
+}
+
+/* ========================= */
+/* 🎨 SUBJECT CARDS STYLING */
+/* ========================= */
+
+.custom-card {
+    max-width: 100%; /* keep for upper bound */
+    min-height: 320px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.2), 
+                -6px -6px 20px rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+.custom-card:hover {
+    transform: scale(1.05);
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 15px;
+}
+
+.card-footer button {
+    flex-grow: 1;
+    margin: 0 5px;
+    height: 45px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 6px;
+}
+
+/* ========================= */
+/* ⚙️ ADMIN DASHBOARD STYLES */
+/* ========================= */
+
+.admin-container {
+    background: #f4f5f7;
+    padding: 20px;
+}
+
+.admin-card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-table th {
+    background: #6a11cb;
+    color: white;
+    font-weight: bold;
+}
+
+.admin-table tbody tr:hover {
+    background: rgba(106, 17, 203, 0.1);
+}
+
+.btn-approve {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-approve:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+.btn-reject {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-reject:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+}
+
+/* ========================= */
+/* 📱 RESPONSIVE DESIGN */
+/* ========================= */
+
+@media (max-width: 768px) {
+    .row .col-md-4 {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    .card-footer {
+        flex-direction: column;
+    }
+
+    .card-footer button {
+        margin: 5px 0;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+/* ========================= */
+/* 📏 CUSTOM CARD WIDTH OPTIONS */
+/* ========================= */
+
+.width-small {
+    width: 280px;
+}
+
+.width-medium {
+    width: 420px;
+}
+
+.width-large {
+    width: 640px;
+}
+
+.width-100 {
+    width: 100%;
+}
+
+.width-50 {
+    width: 50%;
+}
+
+.width-auto {
+    width: auto;
+}
+
+
+/* TIMER */
+
+.timer-box {
+  background-color: #f3f0ff;
+  border: 2px solid #7b61ff;
+  border-radius: 12px;
+  padding: 10px 20px;
+  min-width: 140px;
+  box-shadow: 0 4px 12px rgba(123, 97, 255, 0.3);
+}
+
+.timer-label {
+  font-size: 14px;
+  color: #5c3dc3;
+}
+
+.timer-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #4b2ecc;
+}

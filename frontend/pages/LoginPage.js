@@ -1,81 +1,87 @@
 export default {
-    template: `
+  template: `
     <div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="card p-4 shadow" style="width: 400px;">
-            <h2 class="text-center">Login</h2>
+      <div class="card p-4 custom-card shadow-lg" style="width: 400px;">
+        <h2 class="text-center text-purple fw-bold">Login</h2>
 
-            <!-- Success & Error Messages -->
-            <div v-if="message" :class="messageClass" class="alert text-center">
-                {{ message }}
-            </div>
-
-            <form @submit.prevent="submitLogin">
-                <div class="mb-3">
-                    <label class="form-label">Email:</label>
-                    <input type="email" class="form-control" v-model="email" required />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Password:</label>
-                    <input type="password" class="form-control" v-model="password" required />
-                </div>
-
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
-                </div>
-            </form>
+        <div v-if="message" :class="messageClass" class="alert text-center">
+          {{ message }}
         </div>
+
+        <form @submit.prevent="submitLogin">
+          <div class="mb-3">
+            <label class="form-label text-purple">Email:</label>
+            <input type="email" class="form-control border-purple" v-model="email" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-purple">Password:</label>
+            <input type="password" class="form-control border-purple" v-model="password" required />
+          </div>
+
+          <button type="submit" class="btn btn-purple w-100">Login</button>
+        </form>
+
+        <p class="text-center mt-3">
+          Don't have an account?
+          <router-link to="/register" class="text-purple fw-bold">Sign Up</router-link>
+        </p>
+      </div>
     </div>
-    `,
-    data() {
-        return {
-            email: "",
-            password: "",
-            message: null,
-            messageClass: null
-        };
-    },
-    methods: {
-        async submitLogin() {
-            if (!this.email || !this.password) {
-                this.message = "Please enter both email and password.";
-                this.messageClass = "alert alert-danger";
-                return;
-            }
+  `,
+  data() {
+    return {
+      email: "",
+      password: "",
+      message: null,
+      messageClass: null
+    };
+  },
+  methods: {
+    async submitLogin() {
+      if (!this.email || !this.password) {
+        this.showMessage("Please enter both email and password.", "alert-danger");
+        return;
+      }
 
-            try {
-                const res = await fetch(location.origin + "/login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        email: this.email,
-                        password: this.password
-                    })
-                });
+      console.log("Login email:", this.email);
+      console.log("Login password:", this.password);
 
-                const data = await res.json();
+      try {
+        const res = await fetch("http://127.0.0.1:5000/custom-login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email: this.email,
+            password: this.password
+          })
+        });
 
-                if (res.ok) {
-                    localStorage.setItem("user", JSON.stringify(data)); // Store user details
+        const data = await res.json();
 
-                    this.message = "Login successful! Redirecting...";
-                    this.messageClass = "alert alert-success";
+        if (res.ok) {
+          this.showMessage("Login successful! Redirecting...", "alert-success");
 
-                    setTimeout(() => {
-                        if (data.role === "admin") {
-                            this.$router.push("/admin-dashboard");  // Redirect Admin
-                        } else {
-                            this.$router.push("/user-dashboard");  // Redirect User
-                        }
-                    }, 2000);
-                } else {
-                    this.message = data.message || "Login failed!";
-                    this.messageClass = "alert alert-danger";
-                }
-            } catch (error) {
-                this.message = "An error occurred. Please try again.";
-                this.messageClass = "alert alert-danger";
-            }
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("user", JSON.stringify(data));
+          this.$store.commit("setUser");
+
+          setTimeout(() => {
+            this.$router.push(data.role === "admin" ? "/admin-dashboard" : "/user-dashboard");
+          }, 1500);
+        } else {
+          this.showMessage(data.message || "Login failed!", "alert-danger");
         }
+      } catch (error) {
+        console.error("Login error:", error);
+        this.showMessage("An error occurred. Please try again.", "alert-danger");
+      }
+    },
+    showMessage(msg, cls) {
+      this.message = msg;
+      this.messageClass = `alert ${cls}`;
     }
+  }
 };

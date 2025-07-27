@@ -2,8 +2,8 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy.sql.sqltypes import Time
 from flask_security import UserMixin, RoleMixin
-db = SQLAlchemy()
 
+db = SQLAlchemy()
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
@@ -15,23 +15,22 @@ class User(db.Model, UserMixin):
     qualification = db.Column(db.String, nullable=True)
     dob = db.Column(db.Date, nullable=True)
     scores = db.relationship('Score', back_populates='user')
-    fs_uniquifier = db.Column(db.String,unique = True,nullable=False)
-    active = db.Column(db.Boolean,default=True)
+    fs_uniquifier = db.Column(db.String, unique=True, nullable=False)
+    active = db.Column(db.Boolean, default=True)
     roles = db.relationship('Role', backref='bearers', secondary='user_roles')
+    image = db.Column(db.String, nullable=True)
 
-class Role(db.Model,RoleMixin):
+class Role(db.Model, RoleMixin):
     __tablename__ = 'role'
-    id = db.Column(db.Integer,primary_key = True)
-    name = db.Column(db.String, unique = True, nullable = False)
-    description = db.Column(db.String, nullable =False)
-
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True, nullable=False)
+    description = db.Column(db.String, nullable=False)
 
 class UserRoles(db.Model):
     __tablename__ = 'user_roles'
-    id =db.Column(db.Integer,primary_key= True)
-    user_id =db.Column(db.Integer,db.ForeignKey('user.id'))
-    role_id =db.Column(db.Integer,db.ForeignKey('role.id'))
-        
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
 
 class Subject(db.Model):
     __tablename__ = 'subject'
@@ -39,7 +38,7 @@ class Subject(db.Model):
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
     image = db.Column(db.String, nullable=True)
-    chapters = db.relationship('Chapter', back_populates='subject')
+    chapters = db.relationship('Chapter', back_populates='subject', cascade="all, delete-orphan")
 
 class Chapter(db.Model):
     __tablename__ = 'chapter'
@@ -49,20 +48,21 @@ class Chapter(db.Model):
     image = db.Column(db.String, nullable=True)
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=False)
     subject = db.relationship('Subject', back_populates='chapters')
-    quizzes = db.relationship('Quiz', back_populates='chapter')
+    quizzes = db.relationship('Quiz', back_populates='chapter', cascade="all, delete-orphan")
 
 class Quiz(db.Model):
     __tablename__ = 'quiz'
     id = db.Column(db.Integer, primary_key=True)
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapter.id'), nullable=False)
     date_of_quiz = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    start_time = db.Column(db.Time, nullable=True)
     time_duration = db.Column(db.Time, nullable=False)
     remarks = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     chapter = db.relationship('Chapter', back_populates='quizzes')
-    questions = db.relationship('Question', back_populates='quiz')
-    scores = db.relationship('Score', back_populates='quiz')
+    questions = db.relationship('Question', back_populates='quiz', cascade="all, delete-orphan")
+    scores = db.relationship('Score', back_populates='quiz', cascade="all, delete-orphan")
 
 class Question(db.Model):
     __tablename__ = 'question'
@@ -90,4 +90,3 @@ class Score(db.Model):
     duration_taken = db.Column(db.Time, nullable=True)
     quiz = db.relationship('Quiz', back_populates='scores')
     user = db.relationship('User', back_populates='scores')
-

@@ -1,82 +1,49 @@
-from flask import jsonify, request
-from flask_restful import Api, Resource, fields, marshal_with
-from flask_security import auth_required, current_user
-from backend.models import User, Quiz, Question, Score, db
+from flask_restful import Api
+from backend.apis.subject import SubjectAPI, SubjectListAPI
+from backend.apis.chapter import ChapterAPI, ChapterListAPI
+from backend.apis.quiz import QuizAPI, QuizListAPI
+from backend.apis.question import QuestionAPI, QuestionListAPI
+from backend.apis.score import ScoreAPI
+from backend.apis.user_profile import UserProfileAPI
+from backend.apis.summary import SummaryAPI
+from backend.apis.score import ScoreAPI, MyAttemptsAPI
+from backend.apis.user_list import AdminUserListAPI, AdminToggleUserStatusAPI, AdminUserSummaryAPI
+from backend.apis.export import AdminExportAPI
+from backend.apis.user_export import UserExportAPI
+api = Api()
 
-api = Api(prefix='/api')
+# Subjects APIs
+api.add_resource(SubjectListAPI, '/api/subjects')  
+api.add_resource(SubjectAPI, '/api/subjects/<int:subject_id>')
 
-# User fields
-user_fields = {
-    'id': fields.Integer,
-    'email': fields.String,
-    'username': fields.String,
-    'fullname': fields.String,
-    'qualification': fields.String,
-}
+# Chapters APIs (linked to subjects)
+api.add_resource(ChapterListAPI, '/api/subjects/<int:subject_id>/chapters')  
+api.add_resource(ChapterAPI, '/api/subjects/<int:subject_id>/chapters/<int:chapter_id>')  
 
-class UserAPI(Resource):
-    @auth_required('token')
-    @marshal_with(user_fields)
-    def get(self):
-        return current_user
+# Quizzes APIs (linked to chapters)
+api.add_resource(QuizListAPI, '/api/subjects/<int:subject_id>/chapters/<int:chapter_id>/quizzes')  
+api.add_resource(QuizAPI, '/api/subjects/<int:subject_id>/chapters/<int:chapter_id>/quizzes/<int:quiz_id>')  
 
-# Quiz fields
-quiz_fields = {
-    'id': fields.Integer,
-    'chapter_id': fields.Integer,
-    'date_of_quiz': fields.DateTime,
-    'time_duration': fields.String,
-    'remarks': fields.String,
-}
+# Questions APIs (linked to quizzes)
+api.add_resource(QuestionListAPI, '/api/subjects/<int:subject_id>/chapters/<int:chapter_id>/quizzes/<int:quiz_id>/questions')  
+api.add_resource(QuestionAPI, '/api/subjects/<int:subject_id>/chapters/<int:chapter_id>/quizzes/<int:quiz_id>/questions/<int:question_id>')  
 
-class QuizAPI(Resource):
-    @auth_required('token')
-    @marshal_with(quiz_fields)
-    def get(self, quiz_id):
-        quiz = Quiz.query.get(quiz_id)
-        if not quiz:
-            return {'message': 'Quiz not found'}, 404
-        return quiz
+# Scores API (linked to users, subjects, chapters, and quizzes)
 
-# Question fields
-question_fields = {
-    'id': fields.Integer,
-    'quiz_id': fields.Integer,
-    'statement': fields.String,
-    'option1': fields.String,
-    'option2': fields.String,
-    'option3': fields.String,
-    'option4': fields.String,
-    'correct_option': fields.Integer,
-}
+api.add_resource(ScoreAPI, '/api/scores/<int:user_id>/<int:quiz_id>')
+api.add_resource(MyAttemptsAPI, '/api/scores')
 
-class QuestionAPI(Resource):
-    @auth_required('token')
-    @marshal_with(question_fields)
-    def get(self, quiz_id):
-        questions = Question.query.filter_by(quiz_id=quiz_id).all()
-        return questions
+# userProfile
+api.add_resource(UserProfileAPI, '/api/user/profile')
 
-# Score fields
-score_fields = {
-    'id': fields.Integer,
-    'quiz_id': fields.Integer,
-    'user_id': fields.Integer,
-    'total_scored': fields.Float,
-    'total_marks': fields.Float,
-    'percentage': fields.Float,
-    'result_status': fields.String,
-}
+api.add_resource(SummaryAPI, '/api/summary')
 
-class ScoreAPI(Resource):
-    @auth_required('token')
-    @marshal_with(score_fields)
-    def get(self):
-        scores = Score.query.filter_by(user_id=current_user.id).all()
-        return scores
 
-# Add resources to API
-api.add_resource(UserAPI, '/user')
-api.add_resource(QuizAPI, '/quizzes/<int:quiz_id>')
-api.add_resource(QuestionAPI, '/quizzes/<int:quiz_id>/questions')
-api.add_resource(ScoreAPI, '/scores')
+
+api.add_resource(AdminUserListAPI, "/api/admin/users")
+api.add_resource(AdminToggleUserStatusAPI, "/api/admin/users/<int:user_id>/toggle")
+api.add_resource(AdminUserSummaryAPI, '/api/admin/user/<int:user_id>/summary')
+api.add_resource(AdminExportAPI, "/api/admin/export")
+
+
+api.add_resource(UserExportAPI, '/api/user/export')
