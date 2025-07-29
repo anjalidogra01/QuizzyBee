@@ -17,6 +17,7 @@ export default {
       </div>
 
       <div v-else>
+      <div class="table-responsive">
         <table class="table table-bordered shadow-sm">
           <thead class="table-light">
             <tr>
@@ -64,6 +65,7 @@ export default {
             </tr>
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   `,

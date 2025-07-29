@@ -54,7 +54,8 @@ class MyAttemptsAPI(Resource):
                 'id': attempt.id,
                 'quiz_id': attempt.quiz_id,
                 'user_id': attempt.user_id,
-                'timestamp_of_attempt': attempt.timestamp_of_attempt.isoformat(),
+                'timestamp_of_attempt': (attempt.timestamp_of_attempt + timedelta(hours=5, minutes=30)).isoformat(),
+
                 'total_scored': attempt.total_scored,
                 'total_marks': attempt.total_marks,
                 'percentage': attempt.percentage,

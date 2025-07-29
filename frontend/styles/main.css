@@ -1,45 +1,76 @@
-/* ========================= */
 /* 🌎 GENERAL STYLES */
-/* ========================= */
+
+/* Updated background image styles for responsiveness */
 body {
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;
     margin: 0;
     padding: 0;
-    min-height: 80vh;
-    background-image: url('/static/styles/uploads/images/delicate-splashes-violet-dye.jpg');
+    min-height: 100vh;
+    background-image: url('/static/styles/uploads/images/OIP.webp');
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: center center;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
 }
 
 
-/* Centering Container */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: -1;
+}
+
+@media (max-width: 768px) {
+    body {
+        background-size: contain;
+        background-position: top center;
+        background-attachment: scroll;
+    }
+}
+
+/* Container */
+
 .container {
     max-width: 1200px;
     margin: auto;
     padding: 20px;
+    width: 100%;
 }
 
 /* Jumbotron */
+
 .jumbotron {
     text-align: center;
     background: white;
     border-radius: 10px;
     padding: 30px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
-/* Gradient Text Effect */
+@media (max-width: 768px) {
+    .jumbotron {
+        padding: 20px;
+    }
+}
+
+/* Gradient Text */
+
 .text-gradient {
     background: linear-gradient(90deg, #6a11cb, #2575fc);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-/* ========================= */
 /* 🔹 FEATURE CARD STYLES */
-/* ========================= */
 
 .feature-card {
     background: white;
@@ -58,7 +89,6 @@ body {
     display: flex;
 }
 
-/* Apply Purple Theme */
 .text-purple {
     color: #6a11cb !important;
 }
@@ -67,9 +97,7 @@ body {
     color: #6a11cb !important;
 }
 
-/* ========================= */
-/* 🔘 BUTTON STYLES */
-/* ========================= */
+/*  BUTTON STYLES */
 
 .btn-purple {
     background: #6a11cb;
@@ -108,18 +136,15 @@ body {
     border: 2px solid #6a11cb !important;
 }
 
-/* ========================= */
-/* 🎨 SUBJECT CARDS STYLING */
-/* ========================= */
+/*  SUBJECT CARDS */
 
 .custom-card {
-    max-width: 100%; /* keep for upper bound */
+    max-width: 100%;
     min-height: 320px;
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
     border-radius: 15px;
-    box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.2), 
-                -6px -6px 20px rgba(255, 255, 255, 0.2);
+    box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.2), -6px -6px 20px rgba(255, 255, 255, 0.2);
     padding: 20px;
     border: 1px solid rgba(255, 255, 255, 0.3);
     transition: transform 0.3s ease-in-out;
@@ -127,7 +152,6 @@ body {
     flex-direction: column;
     justify-content: space-between;
 }
-
 
 .custom-card:hover {
     transform: scale(1.05);
@@ -137,6 +161,7 @@ body {
     display: flex;
     justify-content: space-between;
     padding-top: 15px;
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .card-footer button {
@@ -148,9 +173,7 @@ body {
     border-radius: 6px;
 }
 
-/* ========================= */
-/* ⚙️ ADMIN DASHBOARD STYLES */
-/* ========================= */
+/*  ADMIN DASHBOARD */
 
 .admin-container {
     background: #f4f5f7;
@@ -221,9 +244,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* ========================= */
 /* 📱 RESPONSIVE DESIGN */
-/* ========================= */
 
 @media (max-width: 768px) {
     .row .col-md-4 {
@@ -248,10 +269,32 @@ body {
         padding: 10px;
         font-size: 14px;
     }
+
+    .navbar-nav {
+        text-align: center;
+    }
+
+    .navbar-nav .nav-item {
+        margin: 10px 0;
+    }
+
+    .navbar-collapse {
+        background: white;
+        padding: 10px 0;
+        border-top: 1px solid #ccc;
+    }
+
+    .navbar-toggler {
+        border: none;
+    }
+
+    .navbar-toggler:focus {
+        outline: none;
+        box-shadow: none;
+    }
 }
-/* ========================= */
-/* 📏 CUSTOM CARD WIDTH OPTIONS */
-/* ========================= */
+
+/* WIDTH UTILITIES */
 
 .width-small {
     width: 280px;
@@ -277,25 +320,31 @@ body {
     width: auto;
 }
 
-
-/* TIMER */
+/* ⏱TIMER */
 
 .timer-box {
-  background-color: #f3f0ff;
-  border: 2px solid #7b61ff;
-  border-radius: 12px;
-  padding: 10px 20px;
-  min-width: 140px;
-  box-shadow: 0 4px 12px rgba(123, 97, 255, 0.3);
+    background-color: #f3f0ff;
+    border: 2px solid #7b61ff;
+    border-radius: 12px;
+    padding: 10px 20px;
+    min-width: 140px;
+    box-shadow: 0 4px 12px rgba(123, 97, 255, 0.3);
 }
 
 .timer-label {
-  font-size: 14px;
-  color: #5c3dc3;
+    font-size: 14px;
+    color: #5c3dc3;
 }
 
 .timer-value {
-  font-size: 24px;
-  font-weight: 700;
-  color: #4b2ecc;
+    font-size: 24px;
+    font-weight: 700;
+    color: #4b2ecc;
+}
+
+
+/*table admin-all users*/
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }

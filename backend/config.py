@@ -4,7 +4,6 @@ class Config():
 
 
 class LocalDevelopmentConfig(Config):
-    # Database
     SQLALCHEMY_DATABASE_URI = "sqlite:///database.sqlite3"
     DEBUG = True
 
@@ -13,7 +12,6 @@ class LocalDevelopmentConfig(Config):
     SECURITY_PASSWORD_SALT = 'thisshouldbekeptsecret'
     SECRET_KEY = 'shouldbekeyveryhidden'
     
-    # Token header config
     SECURITY_TOKEN_AUTHENTICATION_HEADER = 'Authentication-Token'
     SECURITY_TOKEN_AUTHENTICATION_MODE = 'token'
     SECURITY_TOKEN_MAX_AGE = 3600
@@ -30,6 +28,10 @@ class LocalDevelopmentConfig(Config):
     MAIL_PASSWORD = 'zxgh oxws hdya ybiq'
     MAIL_DEFAULT_SENDER = 'anjalidogra2005@gmail.com'
 
-    # Redis & Celery
+  
     CELERY_BROKER_URL = 'redis://localhost:6379/0'
     CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+    CELERY_TIMEZONE = 'Asia/Kolkata'
+    CELERY_ENABLE_UTC = False
+
+

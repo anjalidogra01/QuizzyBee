@@ -32,19 +32,10 @@ export default {
           <div class="col-md-8">
             <div class="p-4 custom-card width-large">
               <p class="fw-bold">{{ currentQuestion.statement }}</p>
-
               <div v-for="(option, index) in currentQuestion.options" :key="index" class="form-check mb-2">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  :id="'option' + index"
-                  :name="'question' + currentQuestionIndex"
-                  :value="option"
-                  v-model="userAnswers[currentQuestionIndex]"
-                />
+                <input class="form-check-input" type="radio" :id="'option' + index" :name="'question' + currentQuestionIndex" :value="option" v-model="userAnswers[currentQuestionIndex]" />
                 <label class="form-check-label" :for="'option' + index">{{ option }}</label>
               </div>
-
               <div class="d-flex justify-content-between mt-4">
                 <button class="btn btn-outline-light" @click="prevQuestion" :disabled="currentQuestionIndex === 0">Previous</button>
                 <div>
@@ -82,12 +73,6 @@ export default {
         </div>
       </div>
 
-      <div v-else-if="submitted && !showResult" class="text-center mt-5">
-        <div class="alert alert-success">Quiz submitted successfully!</div>
-        <button class="btn btn-success" @click="showResult = true">Show Result</button>
-        <button class="btn btn-outline-secondary ms-2" @click="goHome">Go to Dashboard</button>
-      </div>
-
       <div v-else-if="submitted && showResult" class="mt-4">
         <div class="alert alert-success text-center">
           <h4 class="mb-0 fw-bold">Quiz Submitted!</h4>
@@ -102,49 +87,53 @@ export default {
               <span>Correct: <strong>{{ score.correct }}</strong></span>
             </div>
             <div class="progress mt-2" style="height: 20px;">
-              <div
-                class="progress-bar"
-                role="progressbar"
-                :style="{ width: score.percentage + '%' }"
-                :class="score.percentage >= 40 ? 'bg-success' : 'bg-danger'"
-              >
+              <div class="progress-bar" role="progressbar" :style="{ width: score.percentage + '%' }" :class="score.percentage >= 40 ? 'bg-success' : 'bg-danger'">
                 {{ score.percentage }}%
               </div>
             </div>
           </div>
           <div class="d-flex justify-content-between">
-            <span>Status: 
-              <span :class="score.percentage >= 40 ? 'badge bg-success' : 'badge bg-danger'">
-                {{ score.status }}
-              </span>
-            </span>
+            <span>Status: <span :class="score.percentage >= 40 ? 'badge bg-success' : 'badge bg-danger'">{{ score.status }}</span></span>
             <span>Time Taken: <strong>{{ score.duration }}</strong></span>
-          </div>
-          <div class="text-center mt-4">
-            <button class="btn btn-outline-secondary" @click="goHome">Go to Dashboard</button>
           </div>
         </div>
 
         <div v-for="(question, index) in questions" :key="index" class="mb-3">
-          <div
-            class="p-3 rounded"
-            :class="isCorrect(question, index) ? 'border border-success bg-light' : 'border border-danger bg-light'"
-          >
+          <div class="p-3 rounded" :class="isCorrect(question, index) ? 'border border-success bg-light' : 'border border-danger bg-light'">
             <h6>Question {{ index + 1 }}:</h6>
             <p class="mb-1"><strong>{{ question.statement }}</strong></p>
-            <p>
-              Your Answer: 
-              <span :class="getAnswerClass(question, index)">
-                {{ userAnswers[index] || 'Not Answered' }}
-              </span>
-            </p>
+            <p>Your Answer: <span :class="getAnswerClass(question, index)">{{ userAnswers[index] || 'Not Answered' }}</span></p>
             <p>Correct Answer: <strong>{{ question.options[parseInt(question.correct_option) - 1] }}</strong></p>
             <p v-if="isCorrect(question, index)" class="text-success">✔ Correct</p>
             <p v-else class="text-danger">✘ Incorrect</p>
-            <p class="mt-2">
-              <strong>Explanation:</strong> 
-              {{ getExplanation(question, index) }}
-            </p>
+            <p class="mt-2"><strong>Explanation:</strong> {{ getExplanation(question, index) }}</p>
+          </div>
+        </div>
+
+        <div class="custom-card p-4 mt-5 rounded">
+          <h4 class="text-center mb-3">Your Previous Attempts</h4>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Attempted At</th>
+                <th>Score</th>
+                <th>Status</th>
+                <th>Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(attempt, index) in previousAttempts" :key="attempt.id">
+                <td>{{ index + 1 }}</td>
+                <td>{{ attempt.formatted_timestamp }}</td>
+                <td>{{ attempt.total_scored }}/{{ attempt.total_marks }} ({{ attempt.percentage }}%)</td>
+                <td>{{ attempt.result_status }}</td>
+                <td>{{ attempt.duration_taken }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="mt-4">
+            <canvas id="scoreChart" height="100"></canvas>
           </div>
         </div>
       </div>
@@ -176,7 +165,8 @@ export default {
       startTime: null,
       quizNotAvailable: false,
       scheduledDate: '',
-      scheduledTime: ''
+      scheduledTime: '',
+      previousAttempts: []
     };
   },
   computed: {
@@ -203,13 +193,11 @@ export default {
         const now = new Date();
         this.scheduledDate = data.date_of_quiz;
         this.scheduledTime = data.start_time;
-
         if (now < quizStart) {
           this.quizNotAvailable = true;
           this.loading = false;
           return false;
         }
-
         this.quizDuration = (data.time_duration || 5) * 60;
         this.timeLeft = this.quizDuration;
         return true;
@@ -225,7 +213,6 @@ export default {
       const { subject_id, chapter_id, quiz_id } = this.$route.params;
       const allowed = await this.fetchQuizMetadata(subject_id, chapter_id, quiz_id, token);
       if (!allowed) return;
-
       try {
         const res = await fetch(location.origin + '/api/subjects/' + subject_id + '/chapters/' + chapter_id + '/quizzes/' + quiz_id + '/questions', {
           headers: { 'Content-Type': 'application/json', 'Authentication-Token': token }
@@ -242,17 +229,72 @@ export default {
         this.loading = false;
       }
     },
+    async fetchPreviousAttempts() {
+      try {
+        const res = await fetch(location.origin + '/api/scores', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authentication-Token': this.$store.state.auth_token
+          }
+        });
+        const data = await res.json();
+        const quiz_id = parseInt(this.$route.params.quiz_id);
+        this.previousAttempts = data
+          .filter(item => item.quiz_id === quiz_id)
+          .map(item => ({
+            ...item,
+            formatted_timestamp: new Date(Date.parse(item.timestamp_of_attempt)).toLocaleString('en-IN', {
+  timeZone: 'Asia/Kolkata',
+  hour12: true,
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit'
+})
+
+          }));
+        this.renderScoreChart();
+      } catch (err) {
+        console.error("Failed to fetch previous attempts:", err);
+      }
+    },
+    renderScoreChart() {
+      const ctx = document.getElementById('scoreChart');
+      if (!ctx || !this.previousAttempts.length) return;
+      const labels = this.previousAttempts.map(a => a.formatted_timestamp);
+      const scores = this.previousAttempts.map(a => a.percentage);
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Percentage',
+            data: scores,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: true },
+            title: { display: true, text: 'Your Performance Over Time' }
+          }
+        }
+      });
+    },
     async saveScore() {
       const user = JSON.parse(localStorage.getItem("user"));
       if (!user) return;
-
       const { quiz_id } = this.$route.params;
       const totalSeconds = Math.floor((new Date() - this.startTime) / 1000);
       const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
       const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
       const s = (totalSeconds % 60).toString().padStart(2, '0');
       const durationTaken = h + ':' + m + ':' + s;
-
       try {
         await fetch(location.origin + '/api/scores/' + user.id + '/' + quiz_id, {
           method: "POST",
@@ -299,7 +341,9 @@ export default {
       clearInterval(this.timerInterval);
       this.calculateScore();
       await this.saveScore();
+      await this.fetchPreviousAttempts();
       this.submitted = true;
+      this.showResult = true;
     },
     calculateScore() {
       var correct = 0;
@@ -329,6 +373,7 @@ export default {
   },
   created() {
     this.fetchQuestions();
+    this.fetchPreviousAttempts();
   },
   beforeDestroy() {
     clearInterval(this.timerInterval);

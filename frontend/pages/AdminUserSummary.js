@@ -36,6 +36,7 @@ export default {
         </div>
 
         <h5 class="text-center mb-3">Recent Attempts</h5>
+        <div class="table-responsive">
         <table class="table table-bordered shadow-sm">
           <thead class="table-light">
             <tr>
@@ -64,6 +65,7 @@ export default {
             </tr>
           </tbody>
         </table>
+        <div class="table-responsive">
       </div>
     </div>
   `,

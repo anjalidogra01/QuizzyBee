@@ -13,8 +13,10 @@ def time_to_minutes(value):
         return value.hour * 60 + value.minute
     return 0
 
+
 quiz_fields = {
     'id': fields.Integer,
+    'name': fields.String,
     'chapter_id': fields.Integer,
     'date_of_quiz': fields.String,
     'start_time': fields.String(attribute=lambda q: q.start_time.strftime('%H:%M') if q.start_time else None),
@@ -22,7 +24,9 @@ quiz_fields = {
     'remarks': fields.String
 }
 
+# ✅ Updated: Require 'name' field in input
 quiz_parser = reqparse.RequestParser()
+quiz_parser.add_argument('name', type=str, required=True, help='Quiz name is required')
 quiz_parser.add_argument('date_of_quiz', type=str, required=True, help='Date of quiz is required')
 quiz_parser.add_argument('start_time', type=str, required=True, help='Start time is required (HH:MM)')
 quiz_parser.add_argument('time_duration', type=str, required=True, help='Time duration is required (in minutes)')
@@ -48,6 +52,7 @@ class QuizListAPI(Resource):
             minutes = int(args['time_duration'])
             start_time = datetime.strptime(args['start_time'], "%H:%M").time()
             new_quiz = Quiz(
+                name=args['name'],
                 chapter_id=chapter_id,
                 date_of_quiz=datetime.strptime(args['date_of_quiz'], "%Y-%m-%d").date(),
                 start_time=start_time,
@@ -57,11 +62,11 @@ class QuizListAPI(Resource):
             db.session.add(new_quiz)
             db.session.commit()
 
-            # ✅ Call celery task with proper params
+            # ✅ Notify with quiz name
             chapter = Chapter.query.get(chapter_id)
             subject = Subject.query.get(subject_id)
             notify_new_quiz.delay(
-                f"Quiz on {args['date_of_quiz']}",
+                f"New Quiz: {new_quiz.name} on {args['date_of_quiz']}",
                 subject.name if subject else "Unknown Subject"
             )
 
@@ -89,6 +94,7 @@ class QuizAPI(Resource):
         args = quiz_parser.parse_args()
         try:
             minutes = int(args['time_duration'])
+            quiz.name = args['name']
             quiz.date_of_quiz = datetime.strptime(args['date_of_quiz'], "%Y-%m-%d").date()
             quiz.start_time = datetime.strptime(args['start_time'], "%H:%M").time()
             quiz.time_duration = time(hour=minutes // 60, minute=minutes % 60)

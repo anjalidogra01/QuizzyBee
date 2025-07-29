@@ -5,5 +5,5 @@ cache = Cache(config={
     'CACHE_REDIS_HOST': 'localhost',
     'CACHE_REDIS_PORT': 6379,
     'CACHE_REDIS_DB': 0,
-    'CACHE_DEFAULT_TIMEOUT': 300  # 5 min
+    'CACHE_DEFAULT_TIMEOUT': 300  
 })

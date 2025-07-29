@@ -1,4 +1,3 @@
-// 📁 AdminSummary.vue
 export default {
   name: 'AdminSummary',
   template: `
@@ -6,58 +5,70 @@ export default {
       <h2 class="text-center mb-4 fw-bold text-purple">Admin Summary Dashboard</h2>
 
       <!-- Overall Stats -->
-      <div class="row text-center mb-5">
-        <div class="col-md-4">
-          <div class="p-3 border rounded shadow-sm bg-light">
-            <h5>Total Quizzes</h5>
-            <p class="fs-4 fw-bold">{{ totalQuizzes }}</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="p-3 border rounded shadow-sm bg-light">
-            <h5>Upcoming Quizzes</h5>
-            <p class="fs-4 fw-bold">{{ upcomingQuizzes }}</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="p-3 border rounded shadow-sm bg-light">
-            <h5>Avg. Duration</h5>
-            <p class="fs-4 fw-bold">{{ averageDuration }} mins</p>
-          </div>
-        </div>
-      </div>
+<div class="row text-center mb-5">
+  <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+    <div class="p-3 border rounded shadow-sm bg-light">
+      <h5>Total Quizzes</h5>
+      <p class="fs-4 fw-bold">{{ totalQuizzes }}</p>
+    </div>
+  </div>
+  <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+    <div class="p-3 border rounded shadow-sm bg-light">
+      <h5>Upcoming Quizzes</h5>
+      <p class="fs-4 fw-bold">{{ upcomingQuizzes }}</p>
+    </div>
+  </div>
+  <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+    <div class="p-3 border rounded shadow-sm bg-light">
+      <h5>Avg. Duration</h5>
+      <p class="fs-4 fw-bold">{{ averageDuration }} mins</p>
+    </div>
+  </div>
+</div>
 
       <!-- Chart Grid -->
       <div class="row mb-4">
         <div class="col-md-6 mb-4">
           <h5 class="text-center">Quiz Count Per Subject</h5>
-          <canvas id="subjectChart"></canvas>
+          <div style="height:300px">
+            <canvas id="subjectChart"></canvas>
+          </div>
         </div>
         <div class="col-md-6 mb-4">
           <h5 class="text-center">Pass vs Fail Stats</h5>
-          <canvas id="passFailChart"></canvas>
+          <div style="height:300px">
+            <canvas id="passFailChart"></canvas>
+          </div>
         </div>
       </div>
 
       <div class="row mb-4">
         <div class="col-md-6 mb-4">
           <h5 class="text-center">Top 5 Scoring Users</h5>
-          <canvas id="topUsersChart"></canvas>
+          <div style="height:300px">
+            <canvas id="topUsersChart"></canvas>
+          </div>
         </div>
         <div class="col-md-6 mb-4">
           <h5 class="text-center">Quiz Attempts Over Time</h5>
-          <canvas id="attemptTrendChart"></canvas>
+          <div style="height:300px">
+            <canvas id="attemptTrendChart"></canvas>
+          </div>
         </div>
       </div>
 
       <div class="row mb-4">
         <div class="col-md-6 mb-4">
           <h5 class="text-center">Average Score Per Subject</h5>
-          <canvas id="avgScoreChart"></canvas>
+          <div style="height:300px">
+            <canvas id="avgScoreChart"></canvas>
+          </div>
         </div>
         <div class="col-md-6 mb-4">
           <h5 class="text-center">Pass Rate Per Subject</h5>
-          <canvas id="passRateChart"></canvas>
+          <div style="height:300px">
+            <canvas id="passRateChart"></canvas>
+          </div>
         </div>
       </div>
 
@@ -85,7 +96,7 @@ export default {
   `,
   data() {
     return {
-      loading:true,
+      loading: true,
       totalQuizzes: 0,
       upcomingQuizzes: 0,
       averageDuration: 0,
@@ -106,10 +117,10 @@ export default {
       try {
         const token = localStorage.getItem('token');
         const res = await fetch('/api/summary', {
-         headers: {
-                    "Content-Type": "application/json",
-                    "Authentication-Token": token
-                },
+          headers: {
+            "Content-Type": "application/json",
+            "Authentication-Token": token
+          },
         });
 
         if (!res.ok) throw new Error('Unauthorized');
@@ -144,7 +155,10 @@ export default {
             borderRadius: 8,
           }],
         },
-        options: { responsive: true }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
       });
 
       new Chart(document.getElementById('passFailChart'), {
@@ -156,7 +170,10 @@ export default {
             backgroundColor: ['#28a745', '#dc3545']
           }],
         },
-        options: { responsive: true }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
       });
 
       new Chart(document.getElementById('topUsersChart'), {
@@ -170,7 +187,11 @@ export default {
             borderRadius: 8,
           }],
         },
-        options: { indexAxis: 'y', responsive: true }
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false
+        }
       });
 
       new Chart(document.getElementById('avgScoreChart'), {
@@ -184,7 +205,10 @@ export default {
             borderRadius: 8,
           }],
         },
-        options: { responsive: true }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
       });
 
       new Chart(document.getElementById('passRateChart'), {
@@ -198,7 +222,11 @@ export default {
             borderRadius: 8,
           }],
         },
-        options: { indexAxis: 'y', responsive: true }
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false
+        }
       });
 
       new Chart(document.getElementById('attemptTrendChart'), {
@@ -213,7 +241,10 @@ export default {
             tension: 0.3
           }]
         },
-        options: { responsive: true }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
       });
     },
   }

@@ -14,7 +14,7 @@ import UserScore from "../pages/UserScore.js";
 import ExportReports from "../pages/ExportReports.js";
 import UserManagement from "../pages/UserManagement.js";
 import AdminUserSummary from "../pages/AdminUserSummary.js";
-import UserExportReports from "../pages/UserExportReports.js"
+// import UserExportReports from "../pages/UserExportReports.js"
 
 const routes = [
   { path: "/", component: Home },
@@ -29,7 +29,7 @@ const routes = [
   { path: "/take-quiz/:subject_id/:chapter_id/:quiz_id", component: TakeQuiz },
   { path: "/profile", component: UserProfile },
   { path: "/user-summary", component: UserSummary },
-  { path: '/user-export', component: UserExportReports },
+  // { path: '/user-export', component: UserExportReports },
   { path: '/admin-users', component: UserManagement },
   { path: '/admin-export', component: ExportReports },
   {path: "/user-score",component: UserScore},

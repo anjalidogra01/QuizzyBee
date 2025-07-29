@@ -6,11 +6,12 @@ export default {
       <div class="custom-card shadow-lg p-4 border-0 rounded-4">
         <div class="text-center mb-4">
           <div v-if="user.image" class="text-center mb-4">
-  <img 
-    :src="'/uploads/' + user.image"
-    alt="Profile Picture"
-    style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"
-  />
+<img 
+  :src="'/uploads/profile_pics/' + user.image"
+  alt="Profile Picture"
+  style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"
+/>
+
 </div>
 
           <div v-if="editing" class="mt-3">

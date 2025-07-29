@@ -50,7 +50,8 @@ export default {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', 'quiz_report.csv');
+        link.setAttribute('download', 'user_quiz_summary.csv');
+
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

@@ -64,7 +64,7 @@ export default {
       qualification: "",
       dob: "",
       role: "user",
-      image: null,  // this stores the selected image file
+      image: null,
       message: "",
       messageClass: "",
     };
@@ -106,7 +106,7 @@ export default {
             this.$router.push('/login');
           }, 2000);
         } else {
-          this.showMessage(data.message || "Registration failed!", "alert-danger");
+          this.showMessage(typeof data === "object" ? data.message : data, "alert-danger");
         }
       } catch (error) {
         this.showMessage("An error occurred. Please try again.", "alert-danger");

@@ -52,7 +52,11 @@ class Chapter(db.Model):
 
 class Quiz(db.Model):
     __tablename__ = 'quiz'
+
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False, server_default="Untitled Quiz")
+
+
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapter.id'), nullable=False)
     date_of_quiz = db.Column(db.Date, nullable=False, default=datetime.utcnow)
     start_time = db.Column(db.Time, nullable=True)
@@ -60,9 +64,11 @@ class Quiz(db.Model):
     remarks = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
     chapter = db.relationship('Chapter', back_populates='quizzes')
     questions = db.relationship('Question', back_populates='quiz', cascade="all, delete-orphan")
     scores = db.relationship('Score', back_populates='quiz', cascade="all, delete-orphan")
+
 
 class Question(db.Model):
     __tablename__ = 'question'

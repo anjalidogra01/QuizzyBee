@@ -1,15 +1,25 @@
-# backend/celery_app.py
+from flask import Flask
 from celery import Celery
+from flask_mail import Mail
+from backend.models import db
+from backend.config import LocalDevelopmentConfig
 
-celery = Celery()
+mail = Mail()
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(LocalDevelopmentConfig)
+    db.init_app(app)
+    mail.init_app(app)
+    return app
 
 def make_celery(app):
-    celery.conf.update(
-        broker_url = app.config['CELERY_BROKER_URL'],
-        result_backend = app.config['CELERY_RESULT_BACKEND']
+    celery = Celery(
+        app.import_name,
+        backend=app.config['CELERY_RESULT_BACKEND'],
+        broker=app.config['CELERY_BROKER_URL']
     )
-
-    celery.flask_app = app  # important for accessing app_context()
+    celery.conf.update(app.config)
 
     class ContextTask(celery.Task):
         def __call__(self, *args, **kwargs):
@@ -17,4 +27,31 @@ def make_celery(app):
                 return self.run(*args, **kwargs)
 
     celery.Task = ContextTask
+    celery.flask_app = app
     return celery
+
+# Create Flask app and Celery instance
+flask_app = create_app()
+celery = make_celery(flask_app)
+
+
+from celery.schedules import crontab
+
+from celery.schedules import crontab
+
+celery.conf.update({ 
+    'CELERYBEAT_SCHEDULE': {
+        'send-daily-reminders': {
+            'task': 'backend.tasks.send_daily_reminders',
+            'schedule': crontab(hour=22, minute=0), 
+        },
+        'send-monthly-reports': {
+            'task': 'backend.tasks.send_monthly_report',
+            'schedule': crontab(day_of_month=29, hour=22, minute=0), 
+        },
+    }
+})
+
+
+# Register tasks
+from backend import tasks

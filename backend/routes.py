@@ -6,6 +6,7 @@ from backend.models import db, Role, User
 from werkzeug.utils import secure_filename
 from flask_mail import Message
 import os
+import re
 
 datastore = app.security.datastore
 
@@ -38,7 +39,6 @@ def login():
     if not user or not verify_password(password, user.password):
         return jsonify({'message': 'Invalid email or password'}), 401
 
-    # ⭐ check if user is blocked
     if not user.active:
         return jsonify({'message': 'You are blocked by admin on this platform.'}), 403
 
@@ -48,7 +48,6 @@ def login():
         'id': user.id,
         'token': user.get_auth_token()
     }), 200
-
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -64,6 +63,11 @@ def register():
     dob = request.form.get('dob', '').strip()
     role_name = request.form.get('role', 'user').lower()
 
+    
+    gmail_pattern = r'^[a-zA-Z0-9._%+-]+@gmail\.com$'
+    if not re.match(gmail_pattern, email):
+        return jsonify({'message': 'Only valid Gmail addresses are allowed'}), 400
+
     if not email or not password or not username or not fullname:
         return jsonify({'message': 'All required fields must be filled'}), 400
 
@@ -76,7 +80,7 @@ def register():
     filename = None
     if image and image.filename != '':
         filename = secure_filename(image.filename)
-        upload_folder = app.config['UPLOAD_FOLDER']
+        upload_folder = app.config['IMAGE_UPLOAD_FOLDER']
         os.makedirs(upload_folder, exist_ok=True)
         image_path = os.path.join(upload_folder, filename)
         image.save(image_path)
@@ -114,7 +118,6 @@ def register():
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Error creating user', 'error': str(e)}), 500
-
 
 @app.route('/admin-dashboard', methods=['GET'])
 @auth_required('token')

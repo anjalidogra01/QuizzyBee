@@ -9,27 +9,30 @@ export default {
         <p class="mt-2">Loading your data...</p>
       </div>
 
-      <div v-else>
-        <div class="row mb-4 text-center">
-          <div class="col-md-4">
-            <div class="p-3 border rounded shadow-sm bg-light">
-              <h5>Total Attempts</h5>
-              <p class="fs-4 fw-bold">{{ totalAttempts }}</p>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="p-3 border rounded shadow-sm bg-light">
-              <h5>Average Score</h5>
-              <p class="fs-4 fw-bold">{{ averageScore }}%</p>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="p-3 border rounded shadow-sm bg-light">
-              <h5>Pass Rate</h5>
-              <p class="fs-4 fw-bold" :class="passRate >= 40 ? 'text-success' : 'text-danger'">{{ passRate }}%</p>
-            </div>
-          </div>
-        </div>
+<div v-else>
+  <div class="row mb-4 text-center">
+    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+      <div class="p-3 border rounded shadow-sm bg-light h-100">
+        <h5>Total Attempts</h5>
+        <p class="fs-4 fw-bold">{{ totalAttempts }}</p>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+      <div class="p-3 border rounded shadow-sm bg-light h-100">
+        <h5>Average Score</h5>
+        <p class="fs-4 fw-bold">{{ averageScore }}%</p>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+      <div class="p-3 border rounded shadow-sm bg-light h-100">
+        <h5>Pass Rate</h5>
+        <p class="fs-4 fw-bold" :class="passRate >= 40 ? 'text-success' : 'text-danger'">{{ passRate }}%</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
         <div class="row mb-4">
           <div class="col-md-6 mb-4">

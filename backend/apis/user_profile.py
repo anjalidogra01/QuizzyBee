@@ -45,7 +45,8 @@ class UserProfileAPI(Resource):
                     return {'message': 'Invalid file type'}, 400
 
                 filename = secure_filename(f"{user.id}_{image.filename}")
-                upload_folder = current_app.config['UPLOAD_FOLDER']
+                upload_folder = current_app.config['PROFILE_UPLOAD_FOLDER']
+
                 os.makedirs(upload_folder, exist_ok=True)
 
                 if user.image:

@@ -9,7 +9,7 @@ from backend.apis.summary import SummaryAPI
 from backend.apis.score import ScoreAPI, MyAttemptsAPI
 from backend.apis.user_list import AdminUserListAPI, AdminToggleUserStatusAPI, AdminUserSummaryAPI
 from backend.apis.export import AdminExportAPI
-from backend.apis.user_export import UserExportAPI
+
 api = Api()
 
 # Subjects APIs
@@ -46,4 +46,3 @@ api.add_resource(AdminUserSummaryAPI, '/api/admin/user/<int:user_id>/summary')
 api.add_resource(AdminExportAPI, "/api/admin/export")
 
 
-api.add_resource(UserExportAPI, '/api/user/export')
