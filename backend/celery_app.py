@@ -43,11 +43,11 @@ celery.conf.update({
     'CELERYBEAT_SCHEDULE': {
         'send-daily-reminders': {
             'task': 'backend.tasks.send_daily_reminders',
-            'schedule': crontab(hour=22, minute=0), 
+            'schedule': crontab(hour=23, minute=14), 
         },
         'send-monthly-reports': {
             'task': 'backend.tasks.send_monthly_report',
-            'schedule': crontab(day_of_month=29, hour=22, minute=0), 
+            'schedule': crontab(day_of_month=30, hour=23, minute=14), 
         },
     }
 })
