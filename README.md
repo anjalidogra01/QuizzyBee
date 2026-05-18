@@ -1,4 +1,3 @@
-Here's the complete README.md ready for copy-paste:
 
 ```markdown
 # 🐝 QuizzyBee - AI-Powered Quiz Platform
@@ -9,7 +8,6 @@ Here's the complete README.md ready for copy-paste:
 [![Gemini AI](https://img.shields.io/badge/Gemini-AI-orange.svg)](https://deepmind.google/technologies/gemini/)
 
 QuizzyBee is an intelligent quiz management system that leverages **Google Gemini AI** to automatically generate multiple-choice questions, making quiz creation effortless for educators and learning engaging for students.
-
 ---
 
 ## ✨ Features
